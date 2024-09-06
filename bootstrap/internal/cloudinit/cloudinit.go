@@ -76,7 +76,7 @@ write_files:{{ range . }}
 {{- end -}}
 {{- end -}}
 `
-	sentinelFileCommand = `echo success > /run/cluster-api/bootstrap-success.complete`
+	sentinelFileCommand = `mkdir -p /run/cluster-api && echo success > /run/cluster-api/bootstrap-success.complete`
 
 	ntpTemplate = `{{ define "ntp" -}}{{ if . -}}
 ntp:

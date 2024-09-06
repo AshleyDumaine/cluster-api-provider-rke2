@@ -35,11 +35,7 @@ runcmd:
   - {{ if .AirGapped }}INSTALL_RKE2_ARTIFACT_PATH=/opt/rke2-artifacts sh /opt/install.sh{{ else }}'curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION=%[1]s sh -s - server'{{ end }} 
 {{- if .CISEnabled }}
   - '/opt/rke2-cis-script.sh'{{ end }}
-  - 'systemctl enable rke2-server.service'
-  - 'systemctl start rke2-server.service'
-  - '/var/lib/rancher/rke2/bin/kubectl create secret tls cluster-etcd -o yaml --dry-run=client -n kube-system --cert=/var/lib/rancher/rke2/server/tls/etcd/server-ca.crt --key=/var/lib/rancher/rke2/server/tls/etcd/server-ca.key --kubeconfig /etc/rancher/rke2/rke2.yaml | /var/lib/rancher/rke2/bin/kubectl apply -f- --kubeconfig /etc/rancher/rke2/rke2.yaml'
-  - 'mkdir -p /run/cluster-api'
-  - '{{ .SentinelFileCommand }}'
+  - 'systemctl enable rke2-server.service --now && cd /var/lib/rancher/rke2; bin/kubectl create secret tls cluster-etcd -o yaml --dry-run=client -n kube-system --cert=server/tls/etcd/server-ca.crt --key=server/tls/etcd/server-ca.key --kubeconfig /etc/rancher/rke2/rke2.yaml | bin/kubectl apply -f- --kubeconfig /etc/rancher/rke2/rke2.yaml && {{ .SentinelFileCommand }}'
 {{- template "commands" .PostRKE2Commands }}
 {{ .AdditionalCloudInit -}}
 `
